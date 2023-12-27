@@ -35,11 +35,11 @@ module.exports = {
   },
   settings: {
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts'],
+      '@typescript-eslint/parser': ['.ts', '.d.ts', '.js'],
     },
     'import/resolver': {
       alias: {
-        extensions: ['.ts', '.d.ts'],
+        extensions: ['.ts', '.d.ts', '.js'],
         map: [['@', './src']],
       },
     },

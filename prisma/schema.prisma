@@ -17,15 +17,15 @@ model User {
 }
 
 model Person {
-  id        Int        @id @default(autoincrement())
-  firstName String
-  lastName  String
-  birthDate DateTime?
-  sex       Sex
-  userId    Int?       @unique
-  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  children  Relative[] @relation("Child")
-  parents   Relative[] @relation("Parent")
+  id          Int        @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime?
+  sex         Sex
+  userId      Int?       @unique
+  user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  children    Relative[] @relation("Child")
+  parents     Relative[] @relation("Parent")
 }
 
 model Relative {

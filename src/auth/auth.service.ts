@@ -20,7 +20,7 @@ export class AuthService {
 
   async signup({
     email,
-    birthDate,
+    dateOfBirth,
     firstName,
     lastName,
     password,
@@ -43,7 +43,7 @@ export class AuthService {
         person: {
           create: {
             sex,
-            birthDate: new Date(birthDate).toISOString(),
+            dateOfBirth: new Date(dateOfBirth).toISOString(),
             lastName,
             firstName,
           },

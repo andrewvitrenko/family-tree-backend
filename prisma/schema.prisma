@@ -26,15 +26,18 @@ model Person {
   user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   children    Relative[] @relation("Child")
   parents     Relative[] @relation("Parent")
+  spouse      Relative?  @relation("Spouse")
 }
 
 model Relative {
   id       Int  @id @default(autoincrement())
   childId  Int?
   parentId Int?
+  spouseId Int? @unique
 
   parent Person? @relation("Parent", fields: [parentId], references: [id])
   child  Person? @relation("Child", fields: [childId], references: [id])
+  spouse Person? @relation("Spouse", fields: [spouseId], references: [id])
 }
 
 enum Sex {

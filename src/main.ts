@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from '@/app.module';
+import { ENV } from '@/types/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +16,7 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
-  const PORT = configService.get<number>('PORT');
+  const PORT = configService.get<number>(ENV.PORT);
   await app.listen(PORT);
 }
 

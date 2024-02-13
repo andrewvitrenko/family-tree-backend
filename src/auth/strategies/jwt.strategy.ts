@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { PrismaService } from '@/prisma/prisma.service';
+import { ENV } from '@/types/common';
 
 import { TokenPayload } from '../types';
 
@@ -16,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('ACCESS_TOKEN_KEY'),
+      secretOrKey: configService.get<string>(ENV.ACCESS_TOKEN_KEY),
     });
   }
 

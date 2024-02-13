@@ -1,0 +1,5 @@
+export const enum ENV {
+  PORT = 'PORT',
+  DATABASE_URL = 'DATABASE_URL',
+  ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY',
+}

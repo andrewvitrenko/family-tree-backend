@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
+  id        String  @id @default(uuid()) @db.Uuid
   email     String  @unique
   password  String
   firstName String
@@ -17,24 +17,24 @@ model User {
 }
 
 model Person {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid()) @db.Uuid
   firstName String
   lastName  String
   birthDate DateTime?
   sex       Sex
-  userId    Int?       @unique
+  userId    String?    @unique @db.Uuid
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   children  Relative[] @relation("Child")
   parents   Relative[] @relation("Parent")
 }
 
 model Relative {
-  id       Int  @id @default(autoincrement())
-  childId  Int?
-  parentId Int?
+  id       String  @id @default(uuid()) @db.Uuid
+  childId  String? @db.Uuid
+  parentId String? @db.Uuid
 
-  parent Person? @relation("Parent", fields: [parentId], references: [id], onDelete: Cascade)
-  child  Person? @relation("Child", fields: [childId], references: [id], onDelete: Cascade)
+  parent Person? @relation("Parent", fields: [parentId], references: [id], onDelete: NoAction)
+  child  Person? @relation("Child", fields: [childId], references: [id], onDelete: NoAction)
 }
 
 enum Sex {

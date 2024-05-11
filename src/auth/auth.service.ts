@@ -1,16 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { genSalt, hash } from 'bcrypt';
 
 import { SignupDto } from '@/auth/dto/signup.dto';
 import { AuthResponse } from '@/auth/types';
-import { PrismaService } from '@/prisma/prisma.service';
+import { UserService } from '@/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prismaService: PrismaService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
@@ -18,43 +17,13 @@ export class AuthService {
     return this.getTokens(user.id);
   }
 
-  async signup({
-    email,
-    birthDate,
-    firstName,
-    lastName,
-    password,
-    sex,
-  }: SignupDto) {
-    const existingUser = await this.prismaService.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
-
-    const user = await this.prismaService.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        password: await hash(password, await genSalt()),
-        person: {
-          create: {
-            sex,
-            birthDate: new Date(birthDate).toISOString(),
-            lastName,
-            firstName,
-          },
-        },
-      },
-    });
+  async signup(signupDto: SignupDto) {
+    const user = await this.userService.create(signupDto);
 
     return this.getTokens(user.id);
   }
 
-  private getTokens(userId: number): AuthResponse {
+  private getTokens(userId: string): AuthResponse {
     const access_token = this.jwtService.sign({ userId });
 
     return { access_token };

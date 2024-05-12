@@ -11,23 +11,23 @@ import {
 export class UpdateUserDto {
   @IsEmail()
   @IsOptional()
-  email: string;
+  email?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  firstName: string;
+  firstName?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  lastName: string;
+  lastName?: string;
 
   @IsEnum(Sex)
   @IsOptional()
-  sex: Sex;
+  sex?: Sex;
 
   @IsOptional()
   @IsDateString()
-  birthDate: string;
+  dateOfBirth?: string;
 }

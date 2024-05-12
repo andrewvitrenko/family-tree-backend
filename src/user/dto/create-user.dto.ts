@@ -36,6 +36,7 @@ export class CreateUserDto {
   @IsEnum(Sex)
   sex: Sex;
 
+  // add transform to iso string
   @IsDateString()
-  birthDate: string;
+  dateOfBirth: string;
 }

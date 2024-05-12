@@ -5,12 +5,13 @@ import { genSalt, hash } from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
 import { PaginatedData, QueryParams } from '@/types/common';
 import { SecureUser } from '@/types/user';
-import { CreateUserDto } from '@/user/dto/create-user.dto';
-import { UpdateUserDto } from '@/user/dto/update-user.dto';
 import { exclude } from '@/utils';
 
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
   async get(id: string): Promise<SecureUser> {

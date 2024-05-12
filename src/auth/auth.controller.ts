@@ -3,8 +3,8 @@ import { User } from '@prisma/client';
 
 import { AuthService } from '@/auth/auth.service';
 import { SignupDto } from '@/auth/dto/signup.dto';
+import { UseLocalAuthGuard } from '@/auth/guards/local-auth.guard';
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { UseLocalAuthGuard } from '@/guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {

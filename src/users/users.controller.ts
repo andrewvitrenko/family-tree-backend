@@ -11,8 +11,12 @@ import {
   Query,
 } from '@nestjs/common';
 
+import { UseJwtGuard } from '@/auth/guards/jwt.guard';
+// add trees module
+// add create, get, update and delete trees
+// on delete and update and getOne check that user owns a tree
+// create module for managing relationships in tree
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { UseJwtGuard } from '@/guards/jwt.guard';
 import { PaginatedData } from '@/types/common';
 import { SecureUser } from '@/types/user';
 

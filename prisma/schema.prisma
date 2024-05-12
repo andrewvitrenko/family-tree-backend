@@ -18,7 +18,7 @@ model Tree {
 // members are related to users sometimes
 // create a request to get all trees that user is in and in this request check his members and than check their trees
 model Person {
-  id          String               @id @db.Uuid
+  id          String               @id @default(uuid()) @db.Uuid
   dateOfBirth DateTime
   dateOfDeath DateTime?
   firstName   String

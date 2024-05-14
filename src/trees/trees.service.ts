@@ -10,7 +10,10 @@ export class TreesService {
   constructor(private prismaService: PrismaService) {}
 
   getOne(id: string): Promise<Tree> {
-    return this.prismaService.tree.findUnique({ where: { id } });
+    return this.prismaService.tree.findUnique({
+      where: { id },
+      include: { people: true },
+    });
   }
 
   getAll(userId: string): Promise<Tree[]> {
@@ -22,6 +25,7 @@ export class TreesService {
   async create(ownerId: string, createTreeDto: CreateTreeDto): Promise<Tree> {
     const tree = await this.prismaService.tree.create({
       data: { ownerId, ...createTreeDto },
+      include: { people: true },
     });
 
     const { dateOfBirth, firstName, lastName, sex } =
@@ -47,6 +51,7 @@ export class TreesService {
     return this.prismaService.tree.update({
       where: { id },
       data: updateTreeDto,
+      include: { people: true },
     });
   }
 

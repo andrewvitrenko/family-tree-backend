@@ -1,33 +1,36 @@
 import { Sex } from '@prisma/client';
 import {
-  IsDateString,
-  IsEmail,
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
-export class UpdateUserDto {
-  @IsEmail()
-  @IsOptional()
-  email: string;
+export enum Relation {
+  PARENT = 'parent',
+  CHILD = 'child',
+}
 
+export class AddRelativeDto {
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   lastName: string;
 
   @IsEnum(Sex)
-  @IsOptional()
   sex: Sex;
 
+  @IsDate()
+  dateOfBirth: string;
+
+  @IsDate()
   @IsOptional()
-  @IsDateString()
-  birthDate: string;
+  dateOfDeath?: string;
+
+  @IsEnum(Relation)
+  relation: Relation;
 }

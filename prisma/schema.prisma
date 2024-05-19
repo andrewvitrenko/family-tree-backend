@@ -7,34 +7,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String  @id @default(uuid()) @db.Uuid
-  email     String  @unique
-  password  String
-  firstName String
-  lastName  String
-  person    Person?
+model Tree {
+  id      String   @id @default(uuid()) @db.Uuid
+  name    String
+  owner   User     @relation(fields: [ownerId], references: [id])
+  ownerId String   @db.Uuid
+  people  Person[]
 }
 
 model Person {
-  id        String     @id @default(uuid()) @db.Uuid
-  firstName String
-  lastName  String
-  birthDate DateTime?
-  sex       Sex
-  userId    String?    @unique @db.Uuid
-  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  children  Relative[] @relation("Child")
-  parents   Relative[] @relation("Parent")
+  id          String               @id @default(uuid()) @db.Uuid
+  dateOfBirth DateTime
+  dateOfDeath DateTime?
+  firstName   String
+  lastName    String
+  sex         Sex
+  treeId      String               @unique @db.Uuid
+  tree        Tree                 @relation(fields: [treeId], references: [id])
+  userId      String?              @unique @db.Uuid
+  user        User?                @relation(fields: [userId], references: [id])
+  children    ParentRelationship[] @relation("Parent")
+  parents     ParentRelationship[] @relation("Child")
+  wife        SpouseRelationship?  @relation("Husband")
+  husband     SpouseRelationship?  @relation("Wife")
 }
 
-model Relative {
-  id       String  @id @default(uuid()) @db.Uuid
-  childId  String? @db.Uuid
-  parentId String? @db.Uuid
+model SpouseRelationship {
+  id        String @id @default(uuid()) @db.Uuid
+  wifeId    String @unique @db.Uuid
+  husbandId String @unique @db.Uuid
+  husband   Person @relation("Husband", fields: [husbandId], references: [id])
+  wife      Person @relation("Wife", fields: [wifeId], references: [id])
+}
 
-  parent Person? @relation("Parent", fields: [parentId], references: [id], onDelete: NoAction)
-  child  Person? @relation("Child", fields: [childId], references: [id], onDelete: NoAction)
+model ParentRelationship {
+  id       String @id @default(uuid()) @db.Uuid
+  parentId String @db.Uuid
+  childId  String @db.Uuid
+  parent   Person @relation("Parent", fields: [parentId], references: [id])
+  child    Person @relation("Child", fields: [childId], references: [id])
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  sex         Sex
+  trees       Tree[]
+  persons     Person[]
 }
 
 enum Sex {

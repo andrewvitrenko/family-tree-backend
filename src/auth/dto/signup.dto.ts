@@ -37,5 +37,5 @@ export class SignupDto {
   sex: Sex;
 
   @IsDateString()
-  birthDate: string;
+  dateOfBirth: string;
 }

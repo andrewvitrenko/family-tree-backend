@@ -5,18 +5,18 @@ import { genSalt, hash } from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
 import { PaginatedData, QueryParams } from '@/types/common';
 import { SecureUser } from '@/types/user';
-import { CreateUserDto } from '@/user/dto/create-user.dto';
-import { UpdateUserDto } from '@/user/dto/update-user.dto';
 import { exclude } from '@/utils';
 
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
   async get(id: string): Promise<SecureUser> {
     const user = await this.prismaService.user.findUnique({
       where: { id },
-      include: { person: true },
     });
 
     return exclude(user, ['password']);
@@ -43,7 +43,6 @@ export class UserService {
       where: filter,
       skip: (page - 1) * take,
       take,
-      include: { person: true },
     });
 
     const total = await this.prismaService.user.count({ where: filter });
@@ -55,12 +54,10 @@ export class UserService {
   }
 
   async create({
-    birthDate,
-    email,
-    firstName,
-    lastName,
     password,
-    sex,
+    email,
+    dateOfBirth,
+    ...data
   }: CreateUserDto): Promise<SecureUser> {
     const existing = await this.prismaService.user.findUnique({
       where: { email },
@@ -73,37 +70,19 @@ export class UserService {
     const user = await this.prismaService.user.create({
       data: {
         email,
-        firstName,
-        lastName,
         password: await hash(password, await genSalt()),
-        person: {
-          create: {
-            lastName,
-            firstName,
-            birthDate: new Date(birthDate).toISOString(),
-            sex,
-          },
-        },
+        dateOfBirth: new Date(dateOfBirth).toISOString(),
+        ...data,
       },
-      include: { person: true },
     });
 
     return exclude(user, ['password']);
   }
 
-  async update(
-    id: string,
-    { birthDate, email, firstName, lastName, sex }: UpdateUserDto,
-  ): Promise<SecureUser> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<SecureUser> {
     const user = await this.prismaService.user.update({
       where: { id },
-      data: {
-        email,
-        firstName,
-        lastName,
-        person: { update: { birthDate, sex, firstName, lastName } },
-      },
-      include: { person: true },
+      data: updateUserDto,
     });
 
     return exclude(user, ['password']);

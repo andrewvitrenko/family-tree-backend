@@ -4,12 +4,12 @@ import { User } from '@prisma/client';
 
 import { SignupDto } from '@/auth/dto/signup.dto';
 import { AuthResponse } from '@/auth/types';
-import { UserService } from '@/user/user.service';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private jwtService: JwtService,
   ) {}
 

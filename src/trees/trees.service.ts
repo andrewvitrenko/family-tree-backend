@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Tree } from '@prisma/client';
+import { Prisma, Tree } from '@prisma/client';
 
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
+import { PaginatedData, QueryParams } from '@/types/common';
 
 @Injectable()
 export class TreesService {
@@ -16,10 +17,34 @@ export class TreesService {
     });
   }
 
-  getAll(userId: string): Promise<Tree[]> {
-    return this.prismaService.tree.findMany({
-      where: { people: { some: { userId } } },
+  async getMany(
+    userId: string,
+    { page, search, take }: QueryParams,
+  ): Promise<PaginatedData<Tree>> {
+    const filter: Prisma.TreeWhereInput = {
+      AND: [
+        { people: { some: { userId } } },
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    };
+
+    const trees = await this.prismaService.tree.findMany({
+      where: filter,
+      take,
+      skip: (page - 1) * take,
     });
+
+    const total = await this.prismaService.tree.count({ where: filter });
+
+    return {
+      data: trees,
+      total,
+    };
   }
 
   async create(ownerId: string, createTreeDto: CreateTreeDto): Promise<Tree> {

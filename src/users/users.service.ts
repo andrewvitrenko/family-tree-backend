@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { genSalt, hash } from 'bcrypt';
 
 import { PrismaService } from '@/prisma/prisma.service';
-import { PaginatedData, QueryParams } from '@/types/common';
+import { Pagination, ResponseData } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 import { exclude } from '@/utils';
 
@@ -26,7 +26,7 @@ export class UsersService {
     take,
     search,
     page,
-  }: QueryParams): Promise<PaginatedData<SecureUser>> {
+  }: Pagination): Promise<ResponseData<SecureUser>> {
     const filter: Prisma.UserWhereInput = {
       OR: [
         {

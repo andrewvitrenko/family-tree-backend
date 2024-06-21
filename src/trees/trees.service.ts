@@ -4,7 +4,7 @@ import { Prisma, Tree } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
-import { PaginatedData, QueryParams } from '@/types/common';
+import { Pagination, ResponseData } from '@/types/pagination';
 
 @Injectable()
 export class TreesService {
@@ -19,8 +19,8 @@ export class TreesService {
 
   async getMany(
     userId: string,
-    { page, search, take }: QueryParams,
-  ): Promise<PaginatedData<Tree>> {
+    { page, search, take }: Pagination,
+  ): Promise<ResponseData<Tree>> {
     const filter: Prisma.TreeWhereInput = {
       AND: [
         { people: { some: { userId } } },

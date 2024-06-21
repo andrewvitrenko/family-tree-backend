@@ -1,11 +1,9 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Query,
@@ -13,7 +11,8 @@ import {
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { PaginatedData } from '@/types/common';
+import { PaginationPipe } from '@/pagination/pagination.pipe';
+import { Pagination, ResponseData } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -44,11 +43,9 @@ export class UsersController {
 
   @Get()
   getMany(
-    @Query('search') search: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
-  ): Promise<PaginatedData<SecureUser>> {
-    return this.usersService.getMany({ search, page, take });
+    @Query(new PaginationPipe()) query: Pagination,
+  ): Promise<ResponseData<SecureUser>> {
+    return this.usersService.getMany(query);
   }
 
   @Delete()

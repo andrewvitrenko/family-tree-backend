@@ -1,4 +1,4 @@
-export const exclude = <T extends object, K extends keyof T>(
+export const omit = <T extends object, K extends keyof T>(
   source: T,
   keys: K[],
 ): Omit<T, K> => {

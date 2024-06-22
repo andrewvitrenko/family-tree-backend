@@ -1,30 +1,25 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Query,
 } from '@nestjs/common';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
-// add trees module
-// add create, get, update and delete trees
-// on delete and update and getOne check that user owns a tree
-// create module for managing relationships in tree
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { PaginatedData } from '@/types/common';
+import { PaginationPipe } from '@/pipes/pagination.pipe';
+import { Pagination, ResponseData } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @UseJwtGuard()
-@Controller('user')
+@Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -48,11 +43,9 @@ export class UsersController {
 
   @Get()
   getMany(
-    @Query('search') search: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('take', new DefaultValuePipe(100), ParseIntPipe) take: number,
-  ): Promise<PaginatedData<SecureUser>> {
-    return this.usersService.getMany({ search, page, take });
+    @Query(new PaginationPipe()) query: Pagination,
+  ): Promise<ResponseData<SecureUser>> {
+    return this.usersService.getMany(query);
   }
 
   @Delete()

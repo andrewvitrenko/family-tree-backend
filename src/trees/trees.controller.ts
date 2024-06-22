@@ -7,15 +7,18 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Tree } from '@prisma/client';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 import { GetUserData } from '@/decorators/get-user-data.decorator';
+import { PaginationPipe } from '@/pipes/pagination.pipe';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
 import { Roles, TreesGuard } from '@/trees/trees.guard';
 import { TreesService } from '@/trees/trees.service';
+import { Pagination, ResponseData } from '@/types/pagination';
 
 @UseJwtGuard()
 @Controller('trees')
@@ -30,8 +33,11 @@ export class TreesController {
   }
 
   @Get()
-  getAll(@GetUserData('userId') userId: string): Promise<Tree[]> {
-    return this.treesService.getAll(userId);
+  getMany(
+    @Query(new PaginationPipe()) query: Pagination,
+    @GetUserData('userId') userId: string,
+  ): Promise<ResponseData<Tree>> {
+    return this.treesService.getMany(userId, query);
   }
 
   @Post()

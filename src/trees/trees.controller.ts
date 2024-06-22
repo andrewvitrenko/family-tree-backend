@@ -13,7 +13,7 @@ import { Tree } from '@prisma/client';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { PaginationPipe } from '@/pagination/pagination.pipe';
+import { PaginationPipe } from '@/pipes/pagination.pipe';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
 import { Roles, TreesGuard } from '@/trees/trees.guard';

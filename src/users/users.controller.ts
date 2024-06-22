@@ -11,7 +11,7 @@ import {
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 import { GetUserData } from '@/decorators/get-user-data.decorator';
-import { PaginationPipe } from '@/pagination/pagination.pipe';
+import { PaginationPipe } from '@/pipes/pagination.pipe';
 import { Pagination, ResponseData } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 import { Pagination, QueryParams } from '@/types/pagination';
+import { clearEmpties } from '@/utils';
 
 @Injectable()
 export class PaginationPipe implements PipeTransform {
@@ -23,11 +24,7 @@ export class PaginationPipe implements PipeTransform {
   }
 
   transform(query: Partial<QueryParams>): Pagination {
-    const queryValues: Partial<QueryParams> = Object.fromEntries(
-      Object.entries(query).filter(([, value]) =>
-        typeof value === 'string' ? Boolean(value) : true,
-      ),
-    );
+    const queryValues = clearEmpties(query);
 
     const { search, page, take } = { ...this.defaultValues, ...queryValues };
 

@@ -5,7 +5,7 @@ import { genSalt, hash } from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Pagination, ResponseData } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
-import { exclude } from '@/utils';
+import { omit } from '@/utils';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,7 +19,7 @@ export class UsersService {
       where: { id },
     });
 
-    return exclude(user, ['password']);
+    return omit(user, ['password']);
   }
 
   async getMany({
@@ -48,7 +48,7 @@ export class UsersService {
     const total = await this.prismaService.user.count({ where: filter });
 
     return {
-      data: users.map((user) => exclude(user, ['password'])),
+      data: users.map((user) => omit(user, ['password'])),
       total,
     };
   }
@@ -76,7 +76,7 @@ export class UsersService {
       },
     });
 
-    return exclude(user, ['password']);
+    return omit(user, ['password']);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<SecureUser> {
@@ -85,12 +85,12 @@ export class UsersService {
       data: updateUserDto,
     });
 
-    return exclude(user, ['password']);
+    return omit(user, ['password']);
   }
 
   async remove(id: string): Promise<SecureUser> {
     const user = await this.prismaService.user.delete({ where: { id } });
 
-    return exclude(user, ['password']);
+    return omit(user, ['password']);
   }
 }

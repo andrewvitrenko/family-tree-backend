@@ -4,9 +4,9 @@ export interface Pagination {
   take: number;
 }
 
-export type QueryParams = Record<keyof Pagination, string>;
+export type PaginationParams = Record<keyof Pagination, string>;
 
-export interface ResponseData<T extends object> {
+export interface PaginatedData<T extends object> {
   data: T[];
   total: number;
 }

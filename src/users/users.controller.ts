@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
-import { GetUserData } from '@/decorators/get-user-data.decorator';
+import { UserData } from '@/decorators/user-data.decorator';
 import { PaginationPipe } from '@/pipes/pagination.pipe';
-import { Pagination, ResponseData } from '@/types/pagination';
+import { PaginatedData, Pagination } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,14 +25,14 @@ export class UsersController {
 
   @Patch()
   update(
-    @GetUserData('userId') userId: string,
+    @UserData('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SecureUser> {
     return this.usersService.update(userId, updateUserDto);
   }
 
   @Get('/me')
-  getMe(@GetUserData('userId') userId: string): Promise<SecureUser> {
+  getMe(@UserData('userId') userId: string): Promise<SecureUser> {
     return this.usersService.get(userId);
   }
 
@@ -44,12 +44,12 @@ export class UsersController {
   @Get()
   getMany(
     @Query(new PaginationPipe()) query: Pagination,
-  ): Promise<ResponseData<SecureUser>> {
+  ): Promise<PaginatedData<SecureUser>> {
     return this.usersService.getMany(query);
   }
 
   @Delete()
-  remove(@GetUserData('userId') id: string): Promise<SecureUser> {
+  remove(@UserData('userId') id: string): Promise<SecureUser> {
     return this.usersService.remove(id);
   }
 }

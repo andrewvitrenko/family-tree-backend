@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { genSalt, hash } from 'bcrypt';
 
 import { PrismaService } from '@/prisma/prisma.service';
-import { Pagination, ResponseData } from '@/types/pagination';
+import { PaginatedData, Pagination } from '@/types/pagination';
 import { SecureUser } from '@/types/user';
 import { omit } from '@/utils';
 
@@ -19,14 +19,14 @@ export class UsersService {
       where: { id },
     });
 
-    return omit(user, ['password']);
+    return omit(user, ['password', 'refreshTokens']);
   }
 
   async getMany({
     take,
     search,
     page,
-  }: Pagination): Promise<ResponseData<SecureUser>> {
+  }: Pagination): Promise<PaginatedData<SecureUser>> {
     const filter: Prisma.UserWhereInput = {
       OR: [
         {
@@ -48,7 +48,7 @@ export class UsersService {
     const total = await this.prismaService.user.count({ where: filter });
 
     return {
-      data: users.map((user) => omit(user, ['password'])),
+      data: users.map((user) => omit(user, ['password', 'refreshTokens'])),
       total,
     };
   }
@@ -85,12 +85,31 @@ export class UsersService {
       data: updateUserDto,
     });
 
-    return omit(user, ['password']);
+    return omit(user, ['password', 'refreshTokens']);
   }
 
   async remove(id: string): Promise<SecureUser> {
     const user = await this.prismaService.user.delete({ where: { id } });
 
-    return omit(user, ['password']);
+    return omit(user, ['password', 'refreshTokens']);
+  }
+
+  async getRefreshTokens(userId: string): Promise<string[]> {
+    const { refreshTokens } = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: { refreshTokens: true },
+    });
+
+    return refreshTokens;
+  }
+
+  async updateRefreshTokens(
+    userId: string,
+    refreshTokens: string[],
+  ): Promise<void> {
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { refreshTokens },
+    });
   }
 }

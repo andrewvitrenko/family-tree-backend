@@ -7,6 +7,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { addMonths } from 'date-fns';
 import { Response } from 'express';
 
 import { AuthService } from '@/auth/auth.service';
@@ -74,23 +75,35 @@ export class AuthController {
     res
       .cookie('access_token', access_token, {
         httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
         signed: true,
-        maxAge: 1000 * 60 * 60 * 3,
+        expires: addMonths(Date.now(), 6),
       })
       .cookie('refresh_token', refresh_token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         signed: true,
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: 'none',
+        expires: addMonths(Date.now(), 6),
       });
   }
 
   private removeCookies(res: Response) {
     res
-      .cookie('access_token', '', { maxAge: 0 })
-      .cookie('refresh_token', '', { maxAge: 0 });
+      .cookie('access_token', '', {
+        expires: new Date(),
+        httpOnly: true,
+        secure: true,
+        signed: false,
+        sameSite: 'none',
+      })
+      .cookie('refresh_token', '', {
+        expires: new Date(),
+        httpOnly: true,
+        secure: true,
+        signed: false,
+        sameSite: 'none',
+      });
   }
 }

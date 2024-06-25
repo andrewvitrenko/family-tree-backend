@@ -49,15 +49,16 @@ model ParentRelationship {
 }
 
 model User {
-  id          String   @id @default(uuid()) @db.Uuid
-  email       String   @unique
-  password    String
-  firstName   String
-  lastName    String
-  dateOfBirth DateTime
-  sex         Sex
-  trees       Tree[]
-  persons     Person[]
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique
+  password      String
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  sex           Sex
+  trees         Tree[]
+  persons       Person[]
+  refreshTokens String[]
 }
 
 enum Sex {

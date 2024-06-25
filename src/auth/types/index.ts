@@ -1,7 +1,8 @@
 export interface TokenPayload {
-  userId: string;
+  sub: string;
 }
 
-export interface AuthResponse {
+export interface Tokens {
   access_token: string;
+  refresh_token: string;
 }

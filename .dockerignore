@@ -1,0 +1,8 @@
+dist
+node_modules
+.env.example
+.idea
+.vscode
+.husky
+.git
+test

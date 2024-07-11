@@ -23,9 +23,9 @@ async function bootstrap() {
   const COOKIE_KEY = configService.get<string>(ENV.COOKIE_SECRET);
   app.use(cookieParser(COOKIE_KEY));
 
-  const PORT = configService.get<number>(ENV.PORT);
+  const PORT = configService.get<number>(ENV.PORT) ?? 3000;
   await app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
+    console.log('Server is running on port:', PORT);
   });
 }
 

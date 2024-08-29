@@ -13,7 +13,7 @@ export class TreesService {
   getOne(id: string): Promise<Tree> {
     return this.prismaService.tree.findUnique({
       where: { id },
-      include: { people: true },
+      include: { nodes: true },
     });
   }
 
@@ -23,7 +23,7 @@ export class TreesService {
   ): Promise<PaginatedData<Tree>> {
     const filter: Prisma.TreeWhereInput = {
       AND: [
-        { people: { some: { userId } } },
+        { ownerId: userId },
         {
           name: {
             contains: search,
@@ -49,25 +49,30 @@ export class TreesService {
   }
 
   async create(ownerId: string, createTreeDto: CreateTreeDto): Promise<Tree> {
-    const tree = await this.prismaService.tree.create({
-      data: { ownerId, ...createTreeDto },
-      include: { people: true },
+    const user = await this.prismaService.user.findUnique({
+      where: { id: ownerId },
     });
 
-    const { dateOfBirth, firstName, lastName, sex } =
-      await this.prismaService.user.findUnique({
-        where: { id: ownerId },
-      });
-
-    await this.prismaService.person.create({
+    const tree = await this.prismaService.tree.create({
       data: {
-        firstName,
-        lastName,
-        dateOfBirth,
-        sex,
-        userId: ownerId,
-        treeId: tree.id,
+        ownerId,
+        ...createTreeDto,
+        nodes: {
+          create: {
+            x: 0,
+            y: 0,
+            person: {
+              create: {
+                dateOfBirth: user.dateOfBirth,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                sex: user.sex,
+              },
+            },
+          },
+        },
       },
+      include: { nodes: { include: { person: true } } },
     });
 
     return tree;
@@ -77,7 +82,7 @@ export class TreesService {
     return this.prismaService.tree.update({
       where: { id },
       data: updateTreeDto,
-      include: { people: true },
+      include: { nodes: true },
     });
   }
 

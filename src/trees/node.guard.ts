@@ -8,20 +8,20 @@ import {
 import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
-export class TreesGuardFactory implements CanActivate {
+export class NodeGuardFactory implements CanActivate {
   constructor(private readonly prismaService: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const userId = request.user.userId;
-    const treeId = request.params.id;
+    const { treeId, nodeId } = request.params;
 
     const tree = await this.prismaService.tree.findUnique({
-      where: { id: treeId },
+      where: { id: treeId, ownerId: userId, nodes: { some: { id: nodeId } } },
     });
 
-    return userId === tree.ownerId;
+    return Boolean(tree);
   }
 }
 
-export const TreesGuard = () => UseGuards(TreesGuardFactory);
+export const NodeGuard = () => UseGuards(NodeGuardFactory);

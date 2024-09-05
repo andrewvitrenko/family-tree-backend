@@ -18,25 +18,25 @@ model Tree {
 }
 
 model Node {
-  id           String     @id @default(uuid()) @db.Uuid
-  x            Int
-  y            Int
-  treeId       String     @db.Uuid
-  tree         Tree       @relation(fields: [treeId], references: [id], onDelete: Cascade)
-  person       Person?
-  inRelations  Relation[] @relation("Source")
-  outRelations Relation[] @relation("Target")
+  id       String     @id @default(uuid()) @db.Uuid
+  x        Int
+  y        Int
+  treeId   String     @db.Uuid
+  tree     Tree       @relation(fields: [treeId], references: [id], onDelete: Cascade)
+  person   Person?
+  children Relation[] @relation("Parent")
+  parents  Relation[] @relation("Child")
 }
 
 model Relation {
   id       String @id @default(uuid()) @db.Uuid
-  sourceId String @db.Uuid
-  targetId String @db.Uuid
+  parentId String @db.Uuid
+  childId  String @db.Uuid
 
-  source Node @relation("Source", fields: [sourceId], references: [id])
-  target Node @relation("Target", fields: [targetId], references: [id])
+  parent Node @relation("Parent", fields: [parentId], references: [id])
+  child  Node @relation("Child", fields: [childId], references: [id])
 
-  @@unique([sourceId, targetId])
+  @@unique([parentId, childId])
 }
 
 model Person {

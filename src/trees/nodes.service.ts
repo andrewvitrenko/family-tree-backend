@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Node } from '@prisma/client';
 
 import { PrismaService } from '@/prisma/prisma.service';
 import { AddNodeDto } from '@/trees/dto/add-node.dto';
@@ -11,7 +12,7 @@ export class NodesService {
   add(
     treeId: string,
     { x, y, dateOfBirth, dateOfDeath, firstName, lastName, sex }: AddNodeDto,
-  ) {
+  ): Promise<Node> {
     return this.prismaService.node.create({
       data: {
         treeId,
@@ -25,14 +26,14 @@ export class NodesService {
     });
   }
 
-  remove(nodeId: string) {
+  remove(nodeId: string): Promise<Node> {
     return this.prismaService.node.delete({ where: { id: nodeId } });
   }
 
   update(
     nodeId: string,
     { dateOfBirth, dateOfDeath, firstName, lastName, sex, x, y }: UpdateNodeDto,
-  ) {
+  ): Promise<Node> {
     return this.prismaService.node.update({
       where: { id: nodeId },
       data: {

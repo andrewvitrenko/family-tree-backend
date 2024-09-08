@@ -13,7 +13,9 @@ export class TreesService {
   getOne(id: string): Promise<Tree> {
     return this.prismaService.tree.findUnique({
       where: { id },
-      include: { nodes: { include: { person: true } } },
+      include: {
+        nodes: { include: { person: true, parents: true, children: true } },
+      },
     });
   }
 

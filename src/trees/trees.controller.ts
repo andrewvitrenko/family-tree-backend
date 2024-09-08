@@ -68,12 +68,22 @@ export class TreesController {
     return this.treesService.remove(id);
   }
 
-  @Post('/:treeId/node')
-  addNode(
+  @Post('/:treeId/:parentId/add-child')
+  addChild(
     @Param('treeId', ParseUUIDPipe) treeId: string,
+    @Param('parentId', ParseUUIDPipe) parentId: string,
     @Body() addNodeDto: AddNodeDto,
   ): Promise<Node> {
-    return this.nodesService.add(treeId, addNodeDto);
+    return this.nodesService.addChild(treeId, parentId, addNodeDto);
+  }
+
+  @Post('/:treeId/:childId/add-parent')
+  addParent(
+    @Param('treeId', ParseUUIDPipe) treeId: string,
+    @Param('childId', ParseUUIDPipe) childId: string,
+    @Body() addNodeDto: AddNodeDto,
+  ): Promise<Node> {
+    return this.nodesService.addParent(treeId, childId, addNodeDto);
   }
 
   @Patch('/:treeId/node/:nodeId')

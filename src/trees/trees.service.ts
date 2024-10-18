@@ -39,7 +39,7 @@ export class TreesService {
       where: filter,
       take,
       skip: (page - 1) * take,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { updatedAt: 'desc' },
     });
 
     const total = await this.prismaService.tree.count({ where: filter });

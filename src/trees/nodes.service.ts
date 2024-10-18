@@ -22,7 +22,7 @@ export class NodesService {
         person: { create: person },
         parents: { create: { parentId } },
       },
-      include: { person: true },
+      include: { person: true, parents: true },
     });
   }
 

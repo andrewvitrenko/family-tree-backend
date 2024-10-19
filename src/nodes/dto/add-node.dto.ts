@@ -1,18 +1,14 @@
 import { Sex } from '@prisma/client';
 import {
-  IsDate,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 
-export enum Relation {
-  PARENT = 'parent',
-  CHILD = 'child',
-}
-
-export class AddRelativeDto {
+export class AddNodeDto {
   @IsString()
   @IsNotEmpty()
   firstName: string;
@@ -21,16 +17,19 @@ export class AddRelativeDto {
   @IsNotEmpty()
   lastName: string;
 
-  @IsEnum(Sex)
-  sex: Sex;
+  @IsNumber()
+  x: number;
 
-  @IsDate()
+  @IsNumber()
+  y: number;
+
+  @IsDateString()
   dateOfBirth: string;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   dateOfDeath?: string;
 
-  @IsEnum(Relation)
-  relation: Relation;
+  @IsEnum(Sex)
+  sex: Sex;
 }

@@ -1,31 +1,18 @@
 import { Prisma, PrismaClient, Sex } from '@prisma/client';
-
-type PersonCreateInput = Omit<Prisma.PersonUncheckedCreateInput, 'treeId'>;
+import { randomUUID } from 'crypto';
 
 const users: Prisma.UserCreateInput[] = [
   {
+    id: randomUUID(),
     email: 'test@gmail.com',
     firstName: 'user 1',
     lastName: 'fallback',
     password: '$2b$10$E.RltWNqlJSytAdnfnVH7.UvSK2QhGvxL.Hno4CcdKijHyGGR3M7.',
     dateOfBirth: '2004-06-12T00:00:00.000Z',
     sex: Sex.MALE,
-    trees: {
-      create: [
-        { name: 'tree 1' },
-        { name: 'tree 2' },
-        { name: 'tree 3' },
-        { name: 'tree 4' },
-        { name: 'tree 5' },
-        { name: 'tree 6' },
-        { name: 'tree 7' },
-        { name: 'tree 8' },
-        { name: 'tree 9' },
-        { name: 'tree 10' },
-      ],
-    },
   },
   {
+    id: randomUUID(),
     email: 'test2@gmail.com',
     firstName: 'user 2',
     lastName: 'fallback',
@@ -34,6 +21,7 @@ const users: Prisma.UserCreateInput[] = [
     sex: Sex.MALE,
   },
   {
+    id: randomUUID(),
     email: 'test3@gmail.com',
     firstName: 'user 3',
     lastName: 'fallback',
@@ -42,6 +30,7 @@ const users: Prisma.UserCreateInput[] = [
     sex: Sex.FEMALE,
   },
   {
+    id: randomUUID(),
     email: 'test4@gmail.com',
     firstName: 'user 4',
     lastName: 'fallback',
@@ -51,21 +40,49 @@ const users: Prisma.UserCreateInput[] = [
   },
 ];
 
+const referenceUserId = users[0].id;
+
+const trees: Prisma.TreeUncheckedCreateInput[] = [
+  { id: randomUUID(), name: 'tree 1', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 2', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 3', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 4', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 5', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 6', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 7', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 8', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 9', ownerId: referenceUserId },
+  { id: randomUUID(), name: 'tree 10', ownerId: referenceUserId },
+];
+
+const referenceTreeId = trees[0].id;
+
+const nodes: Prisma.NodeUncheckedCreateInput[] = [
+  { id: randomUUID(), treeId: referenceTreeId, x: 0, y: 0 },
+  { id: randomUUID(), treeId: referenceTreeId, x: 0, y: 0 },
+  { id: randomUUID(), treeId: referenceTreeId, x: 0, y: 0 },
+  { id: randomUUID(), treeId: referenceTreeId, x: 0, y: 0 },
+  { id: randomUUID(), treeId: referenceTreeId, x: 0, y: 0 },
+];
+
+const people: Prisma.PersonUncheckedCreateInput[] = nodes.map(
+  (node, index) => ({
+    id: randomUUID(),
+    nodeId: node.id,
+    firstName: `Person ${index + 2} firstname`,
+    lastName: `Person ${index + 2} lastname`,
+    dateOfBirth: '2004-06-12T00:00:00.000Z',
+    sex: Sex.MALE,
+  }),
+);
+
 const prisma = new PrismaClient();
 
 const main = async () => {
-  for (const user of users) {
-    const { trees, sex, dateOfBirth, firstName, lastName } =
-      await prisma.user.create({ data: user, include: { trees: true } });
-
-    const person: PersonCreateInput = { firstName, lastName, dateOfBirth, sex };
-
-    for (const tree of trees) {
-      await prisma.person.create({
-        data: { ...person, treeId: tree.id, userId: tree.ownerId },
-      });
-    }
-  }
+  await prisma.user.createMany({ data: users });
+  await prisma.tree.createMany({ data: trees });
+  await prisma.node.createMany({ data: nodes });
+  await prisma.person.createMany({ data: people });
 };
 
 main()

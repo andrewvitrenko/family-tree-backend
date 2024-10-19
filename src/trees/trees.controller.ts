@@ -9,16 +9,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Node, Tree } from '@prisma/client';
+import { Tree } from '@prisma/client';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 import { UserData } from '@/decorators/user-data.decorator';
 import { PaginationPipe } from '@/pipes/pagination.pipe';
-import { AddNodeDto } from '@/trees/dto/add-node.dto';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
-import { UpdateNodeDto } from '@/trees/dto/update-node.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
-import { NodesService } from '@/trees/nodes.service';
 import { TreesGuard } from '@/trees/trees.guard';
 import { TreesService } from '@/trees/trees.service';
 import { PaginatedData, Pagination } from '@/types/pagination';
@@ -26,10 +23,7 @@ import { PaginatedData, Pagination } from '@/types/pagination';
 @UseJwtGuard()
 @Controller('trees')
 export class TreesController {
-  constructor(
-    private readonly treesService: TreesService,
-    private readonly nodesService: NodesService,
-  ) {}
+  constructor(private readonly treesService: TreesService) {}
 
   @TreesGuard()
   @Get('/:id')
@@ -66,36 +60,5 @@ export class TreesController {
   @Delete('/:id')
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<Tree> {
     return this.treesService.remove(id);
-  }
-
-  @Post('/:treeId/:parentId/add-child')
-  addChild(
-    @Param('treeId', ParseUUIDPipe) treeId: string,
-    @Param('parentId', ParseUUIDPipe) parentId: string,
-    @Body() addNodeDto: AddNodeDto,
-  ): Promise<Node> {
-    return this.nodesService.addChild(treeId, parentId, addNodeDto);
-  }
-
-  @Post('/:treeId/:childId/add-parent')
-  addParent(
-    @Param('treeId', ParseUUIDPipe) treeId: string,
-    @Param('childId', ParseUUIDPipe) childId: string,
-    @Body() addNodeDto: AddNodeDto,
-  ): Promise<Node> {
-    return this.nodesService.addParent(treeId, childId, addNodeDto);
-  }
-
-  @Patch('/:treeId/node/:nodeId')
-  updateNode(
-    @Param('nodeId', ParseUUIDPipe) nodeId: string,
-    @Body() updateNodeDto: UpdateNodeDto,
-  ): Promise<Node> {
-    return this.nodesService.update(nodeId, updateNodeDto);
-  }
-
-  @Delete('/:treeId/node/:nodeId')
-  removeNode(@Param('nodeId', ParseUUIDPipe) nodeId: string): Promise<Node> {
-    return this.nodesService.remove(nodeId);
   }
 }

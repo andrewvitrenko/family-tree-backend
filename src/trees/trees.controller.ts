@@ -16,18 +16,17 @@ import { UserData } from '@/decorators/user-data.decorator';
 import { PaginationPipe } from '@/pipes/pagination.pipe';
 import { CreateTreeDto } from '@/trees/dto/create-tree.dto';
 import { UpdateTreeDto } from '@/trees/dto/update-tree.dto';
-import { Roles, TreesGuard } from '@/trees/trees.guard';
+import { TreesGuard } from '@/trees/trees.guard';
 import { TreesService } from '@/trees/trees.service';
 import { PaginatedData, Pagination } from '@/types/pagination';
 
 @UseJwtGuard()
 @Controller('trees')
 export class TreesController {
-  constructor(private treesService: TreesService) {}
+  constructor(private readonly treesService: TreesService) {}
 
   @TreesGuard()
-  @Roles('member')
-  @Get(':id')
+  @Get('/:id')
   getOne(@Param('id', ParseUUIDPipe) id: string): Promise<Tree> {
     return this.treesService.getOne(id);
   }
@@ -49,8 +48,7 @@ export class TreesController {
   }
 
   @TreesGuard()
-  @Roles('owner')
-  @Patch(':id')
+  @Patch('/:id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTreeDto: UpdateTreeDto,
@@ -59,8 +57,7 @@ export class TreesController {
   }
 
   @TreesGuard()
-  @Roles('owner')
-  @Delete(':id')
+  @Delete('/:id')
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<Tree> {
     return this.treesService.remove(id);
   }

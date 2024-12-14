@@ -11,7 +11,7 @@ import { isUUID } from 'class-validator';
 import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
-export class LastNodeGuardFactory implements CanActivate {
+export class FirstNodeGuardFactory implements CanActivate {
   constructor(private readonly prismaService: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,12 +27,14 @@ export class LastNodeGuardFactory implements CanActivate {
       select: { nodes: true },
     });
 
-    if (nodes.length < 2) {
-      throw new ConflictException("Can't delete last node in tree");
+    if (nodes.length) {
+      throw new ConflictException(
+        'There are nodes in the tree. Use addChild or addParent endpoints to add new nodes',
+      );
     }
 
     return true;
   }
 }
 
-export const LastNodeGuard = () => UseGuards(LastNodeGuardFactory);
+export const FirstNodeGuard = () => UseGuards(FirstNodeGuardFactory);

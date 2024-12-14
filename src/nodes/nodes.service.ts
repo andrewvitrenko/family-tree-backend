@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Node } from '@prisma/client';
+import { Node, Prisma } from '@prisma/client';
 
 import { PrismaService } from '@/prisma/prisma.service';
 
@@ -10,37 +10,27 @@ import { UpdateNodeDto } from './dto/update-node.dto';
 export class NodesService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  addFirstNode(treeId: string, addNodeDto: AddNodeDto): Promise<Node> {
+    return this.create(treeId, addNodeDto);
+  }
+
   addChild(
     treeId: string,
     nodeId: string,
-    { x, y, ...person }: AddNodeDto,
+    addNodeDto: AddNodeDto,
   ): Promise<Node> {
-    return this.prismaService.node.create({
-      data: {
-        treeId,
-        x,
-        y,
-        person: { create: person },
-        parents: { create: { parentId: nodeId } },
-      },
-      include: { person: true, parents: true },
+    return this.create(treeId, addNodeDto, {
+      parents: { create: { parentId: nodeId } },
     });
   }
 
   addParent(
     treeId: string,
     nodeId: string,
-    { x, y, ...person }: AddNodeDto,
+    addNodeDto: AddNodeDto,
   ): Promise<Node> {
-    return this.prismaService.node.create({
-      data: {
-        treeId,
-        x,
-        y,
-        person: { create: person },
-        children: { create: { childId: nodeId } },
-      },
-      include: { person: true, children: true },
+    return this.create(treeId, addNodeDto, {
+      children: { create: { childId: nodeId } },
     });
   }
 
@@ -60,6 +50,26 @@ export class NodesService {
         person: { update: person },
       },
       include: { person: true },
+    });
+  }
+
+  private create(
+    treeId: string,
+    { x, y, ...person }: AddNodeDto,
+    relations?: {
+      parents?: Prisma.RelationCreateNestedManyWithoutChildInput;
+      children?: Prisma.RelationCreateNestedManyWithoutParentInput;
+    },
+  ): Promise<Node> {
+    return this.prismaService.node.create({
+      data: {
+        x,
+        y,
+        treeId,
+        person: { create: person },
+        ...relations,
+      },
+      include: { parents: true, children: true, person: true },
     });
   }
 }

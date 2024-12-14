@@ -11,11 +11,13 @@ import { Node } from '@prisma/client';
 
 import { UseJwtGuard } from '@/auth/guards/jwt.guard';
 
+import { ChildGuard } from './child.guard';
 import { AddNodeDto } from './dto/add-node.dto';
 import { UpdateNodeDto } from './dto/update-node.dto';
-import { LastNodeGuard } from './last-node.guard';
+import { FirstNodeGuard } from './first-node.guard';
 import { NodesGuard } from './nodes.guard';
 import { NodesService } from './nodes.service';
+import { ParentsGuard } from './parent.guard';
 
 @NodesGuard()
 @UseJwtGuard()
@@ -23,6 +25,16 @@ import { NodesService } from './nodes.service';
 export class NodesController {
   constructor(private readonly nodesService: NodesService) {}
 
+  @FirstNodeGuard()
+  @Post('/:treeId')
+  addFirstNode(
+    @Param('treeId', ParseUUIDPipe) treeId: string,
+    @Body() addNodeDto: AddNodeDto,
+  ): Promise<Node> {
+    return this.nodesService.addFirstNode(treeId, addNodeDto);
+  }
+
+  @ChildGuard()
   @Post('/:treeId/:nodeId/add-child')
   addChild(
     @Param('treeId', ParseUUIDPipe) treeId: string,
@@ -32,6 +44,7 @@ export class NodesController {
     return this.nodesService.addChild(treeId, nodeId, addNodeDto);
   }
 
+  @ParentsGuard()
   @Post('/:treeId/:nodeId/add-parent')
   addParent(
     @Param('treeId', ParseUUIDPipe) treeId: string,
@@ -49,7 +62,6 @@ export class NodesController {
     return this.nodesService.update(nodeId, updateNodeDto);
   }
 
-  @LastNodeGuard()
   @Delete('/:treeId/:nodeId')
   remove(@Param('nodeId', ParseUUIDPipe) nodeId: string): Promise<Node> {
     return this.nodesService.remove(nodeId);

@@ -23,8 +23,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typecheck": "tsc",
+    "preinstall": "pnpx only-allow pnpm",
     "prepare": "husky",
-    "check-updates": "npx npm-check-updates"
+    "check-updates": "pnpx npm-check-updates --interactive"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.6",
@@ -64,6 +65,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^16.0.0",
     "husky": "^9.1.6",
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
